@@ -1,0 +1,26 @@
+Package: rerandom
+Type: Package
+Title: Insert Package Title
+Version: 0.0.0.9000
+Authors@R: c(
+        person("zhanyilo", email = "zhanyilo@merck.com", role = c("aut", "cre")),
+        person("BARDS, Merck & Co., Inc.", role = c("cph"))
+       )
+Description: Insert Package Description. 
+Depends: R (>= 3.6.0)
+License: file LICENSE
+Imports: 
+Suggests: 
+    devtools,
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    covr,
+    dplyr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)  
+Rmarkdwon: echo = TRUE
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
+Config/testthat/edition: 3

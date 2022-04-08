@@ -1,0 +1,28 @@
+---
+title: "Introduction to rerandom"
+output:
+  rmarkdown::html_vignette
+resource_files:
+   - package_manual.pdf
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Introduction to rerandom}
+---
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "100%"
+)
+```
+
+```{r, include=FALSE}
+manual <-devtools::build_manual(path = ".")
+manual <- basename(grep("--output=", manual$command, value = TRUE))
+file.rename(from = manual, to = "package_manual.pdf")
+```
+
+# Overview
+
+Please provide an overview of the R package.
