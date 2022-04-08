@@ -1,18 +1,17 @@
 Package: rerandom
 Type: Package
-Title: Insert Package Title
-Version: 0.0.0.9000
+Title: An R package for rerandomization test
+Version: 0.0.1
 Authors@R: c(
-        person("zhanyilo", email = "zhanyilo@merck.com", role = c("aut", "cre")),
-        person("BARDS, Merck & Co., Inc.", role = c("cph"))
+        person("Yilong", "Zhang", email = "elong0527@gmail.com", role = c("aut", "cre"))
        )
 Description: Insert Package Description. 
 Depends: R (>= 3.6.0)
-License: file LICENSE
+License: GPL (>= 3)
 Imports: 
 Suggests: 
     devtools,
-    testthat (>= 3.0.0),
+    testthat,
     knitr,
     rmarkdown,
     covr,
@@ -21,6 +20,5 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)  
 Rmarkdwon: echo = TRUE
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
-Config/testthat/edition: 3

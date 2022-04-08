@@ -1,28 +1,111 @@
 ---
-title: "Introduction to rerandom"
-output:
-  rmarkdown::html_vignette
-resource_files:
-   - package_manual.pdf
+title: "Introduction of Minimization Randomization"
+output: rmarkdown::html_vignette
 vignette: >
+  %\VignetteIndexEntry{Introduction of Minimization Randomization}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Introduction to rerandom}
+  %\VignetteEncoding{UTF-8}
+bibliography: reference.bib
 ---
 
-```{r, echo = FALSE, message = FALSE, include = FALSE}
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  out.width = "100%"
+  comment = "#>"
 )
 ```
 
-```{r, include=FALSE}
-manual <-devtools::build_manual(path = ".")
-manual <- basename(grep("--output=", manual$command, value = TRUE))
-file.rename(from = manual, to = "package_manual.pdf")
+```{r setup, message = FALSE}
+devtools::load_all()
+library(dplyr)
+library(table1)
 ```
 
-# Overview
+In this article, we illustrate how to simulate treatment group using minimization randomization.
+An introduction of minimiazation randomization can be found in 
+<https://online.stat.psu.edu/stat509/lesson/8/8.5> or @pocock1975sequential. 
+The implementation is following section 2.2 of @jin2019algorithms. 
 
-Please provide an overview of the R package.
+> The original paper implemented the algorithm in
+> [`Minirand`](https://cran.r-project.org/web/packages/Minirand/index.html)
+> Here we provide a pipe friendly and potentially efficient implementation
+
+The current implementation allow
+
+- multiple treatment groups. 
+- flexible allocation ratio.
+- user specified imbalance function. 
+- user specified weight of imbalance. 
+
+To apply minimization randomization, user needs to determine some parameters. 
+
+- sample size: `n`
+
+```{r}
+n <- 100
+```
+
+- stratum: here we created a function `define_stratum` that uses a named vector 
+to specify the category of each stratum and the randomization weight. 
+
+Below is an example of stratum using `sex` with equal weight. 
+
+```{r}
+stratum <- define_stratum(sex = c("Male" = 1, "Female" = 1))
+stratum
+```
+
+Then we can use `simu_stratum` to simulate a data with the pre-defined stratum. 
+
+```{r}
+set.seed(1234)
+simu_stratum(4, stratum = stratum)
+```
+
+- treatment group: 2 group
+
+```{r}
+treatment <- c("case", "control")
+```
+
+- randomization ratio (default): 1:1
+- allocation probability (default): 0.9, 0.1
+- stratum weight (default): equal
+- imbalance function (default): range (`imbalance_fun_range()`)  
+
+After we specify those parameters, we can use `simu_treatment_minimization()` to 
+simulate treatment group using minimization randomization. 
+
+```{r}
+set.seed(1234)
+df <- n %>% 
+  simu_stratum(stratum = stratum) %>% 
+  simu_treatment_minimization(treatment = treatment, 
+                              ratio = c(1, 1))
+
+head(df)
+```
+
+We can check the balance of the sex variable. 
+
+```{r}
+table(df$sex)
+```
+In this toy example, there are only two stratums. 
+Using block randomization is more proper in practice. 
+The block randomization is implemented in `simu_treatment_block()`. 
+
+```{r}
+set.seed(1234)
+df <- n %>% 
+  simu_stratum(stratum = stratum) %>% 
+  simu_treatment_block(treatment = treatment, 
+                       ratio = c(1, 1))
+
+head(df)
+```
+
+```{r}
+table(df$sex)
+```
+
