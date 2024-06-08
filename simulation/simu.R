@@ -8,11 +8,11 @@ library(rerandom)
 library(dplyr)
 library(survival)
 # Get task id for each simulation job (not run in Rstudio Serve)
-task_id <- as.integer(Sys.getenv("SGE_TASK_ID"))
+# task_id <- as.integer(Sys.getenv("SGE_TASK_ID"))
 
-# Set up Simulation Enviroment
+# Set up Simulation Environment
 
-# task_id <- 1  # used for debugging purpose
+#task_id <- 1  # used for debugging purpose
 set.seed(task_id)
 
 #---------- Simulation Setup --------------------#
@@ -54,8 +54,10 @@ c_max <- 5
 time <- exp(l + log(- log(runif(n)))) # PH model based on transformation model
 cen <- runif(n, min = c_min, max = c_max) # Uniform censoring  
 
+df$l <- l
+df$p <- p
 df$binary <- rbinom(n = n, size = 1, prob = p)
-df$continous <- l + rnorm(n)
+df$continous <- l + rnorm(n, sd = 2)
 df$surv_time <- pmin(time, cen)
 df$surv_status <- time < cen
 
@@ -75,9 +77,10 @@ fit_rerandom <- function(ana){
   continous <- list(est = summary(fit_continous)$coeff[2, 1], 
                     sd = summary(fit_continous)$coeff[2, 2], 
                     z = summary(fit_continous)$coeff[2, 3], 
-                    wald_p = summary(fit_continous)$coeff[2, 4])
-  
-  
+                    wald_p = summary(fit_continous)$coeff[2, 4], 
+                    l_mean = mean(l),
+                    r2 = (lm(continous ~ l, data = ana) %>% summary())$r.squared)
+
   survival <- list(est = NULL,
                    sd = NULL, 
                    z = sqrt(fit_survival$chisq), 
@@ -92,6 +95,7 @@ fit_rerandom <- function(ana){
 # observed data
 
 res <- fit_rerandom(df)
+res
 
 # re-randomization 
 
